@@ -1,564 +1,185 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Nashif Adnan Akash</title>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <title>Calculator</title>
   <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
 
-    :root {
-      --cream: #f5f0e8;
-      --ink: #1a1410;
-      --gold: #c8973a;
-      --muted: #7a6f63;
-      --border: #d8d0c4;
-    }
+```
+body {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #1a1410;
+  font-family: 'Georgia', serif;
+}
 
-    html { scroll-behavior: smooth; }
+.calculator {
+  width: 320px;
+  background: #221e18;
+  border: 1px solid #3a3028;
+  box-shadow: 0 24px 60px rgba(0,0,0,0.6);
+}
 
-    body {
-      background: var(--cream);
-      color: var(--ink);
-      font-family: 'DM Sans', sans-serif;
-      font-weight: 300;
-      line-height: 1.7;
-      overflow-x: hidden;
-    }
+.display {
+  padding: 24px 20px 16px;
+  text-align: right;
+  background: #1a1410;
+  border-bottom: 1px solid #2e2620;
+}
 
-    /* NAV */
-    nav {
-      position: fixed;
-      top: 0; left: 0; right: 0;
-      z-index: 100;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 1.4rem 4rem;
-      background: rgba(245, 240, 232, 0.92);
-      backdrop-filter: blur(8px);
-      border-bottom: 1px solid var(--border);
-    }
+.expression {
+  font-size: 13px;
+  color: #7a6f63;
+  min-height: 18px;
+  margin-bottom: 6px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
 
-    .nav-logo {
-      font-family: 'Playfair Display', serif;
-      font-weight: 700;
-      font-size: 1.15rem;
-      letter-spacing: 0.02em;
-      color: var(--ink);
-      text-decoration: none;
-    }
+.result {
+  font-size: 48px;
+  font-weight: bold;
+  color: #f5f0e8;
+  line-height: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
 
-    .nav-links {
-      display: flex;
-      gap: 2rem;
-      list-style: none;
-      flex-wrap: wrap;
-    }
+.buttons {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1px;
+  background: #2e2620;
+}
 
-    .nav-links a {
-      text-decoration: none;
-      color: var(--muted);
-      font-size: 0.82rem;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      transition: color 0.2s;
-    }
+button {
+  background: #221e18;
+  border: none;
+  color: #f5f0e8;
+  font-size: 20px;
+  padding: 22px 10px;
+  cursor: pointer;
+  transition: background 0.1s;
+}
 
-    .nav-links a:hover { color: var(--gold); }
+button:hover { background: #2e2822; }
+button:active { background: #c8973a; color: #1a1410; }
 
-    /* HERO */
-    .hero {
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      padding: 8rem 4rem 4rem;
-      position: relative;
-      overflow: hidden;
-    }
+button.op { color: #c8973a; }
+button.op:active { background: #c8973a; color: #1a1410; }
 
-    .hero::before {
-      content: 'NAA';
-      position: absolute;
-      right: -0.02em;
-      top: 50%;
-      transform: translateY(-50%);
-      font-family: 'Playfair Display', serif;
-      font-size: clamp(12rem, 22vw, 22rem);
-      font-weight: 900;
-      color: transparent;
-      -webkit-text-stroke: 1px var(--border);
-      line-height: 1;
-      pointer-events: none;
-      user-select: none;
-    }
+button.equals {
+  background: #c8973a;
+  color: #1a1410;
+  font-size: 24px;
+}
+button.equals:hover { background: #d9a840; }
+button.equals:active { background: #e0b050; }
 
-    .hero-content { max-width: 680px; position: relative; z-index: 1; }
+button.clear { color: #e07070; font-size: 16px; }
+button.clear:active { background: #c8973a; color: #1a1410; }
 
-    .hero-tag {
-      font-size: 0.78rem;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      color: var(--gold);
-      margin-bottom: 1.5rem;
-      display: flex;
-      align-items: center;
-      gap: 0.8rem;
-    }
+button.span2 { grid-column: span 2; }
+```
 
-    .hero-tag::before {
-      content: '';
-      display: inline-block;
-      width: 2rem;
-      height: 1px;
-      background: var(--gold);
-    }
-
-    h1 {
-      font-family: 'Playfair Display', serif;
-      font-size: clamp(3rem, 6vw, 5.5rem);
-      font-weight: 900;
-      line-height: 1.05;
-      margin-bottom: 1.8rem;
-      letter-spacing: -0.01em;
-    }
-
-    .hero-desc {
-      font-size: 1.05rem;
-      color: var(--muted);
-      max-width: 520px;
-      margin-bottom: 2.8rem;
-    }
-
-    .hero-links { display: flex; gap: 1rem; flex-wrap: wrap; }
-
-    .btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      padding: 0.75rem 1.8rem;
-      font-size: 0.82rem;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      text-decoration: none;
-      border: 1px solid var(--ink);
-      color: var(--ink);
-      background: transparent;
-      transition: background 0.2s, color 0.2s;
-      cursor: pointer;
-    }
-
-    .btn:hover { background: var(--ink); color: var(--cream); }
-    .btn.primary { background: var(--ink); color: var(--cream); }
-    .btn.primary:hover { background: var(--gold); border-color: var(--gold); }
-
-    /* SECTIONS */
-    section { padding: 6rem 4rem; border-top: 1px solid var(--border); }
-
-    .section-header {
-      display: flex;
-      align-items: baseline;
-      gap: 1.2rem;
-      margin-bottom: 4rem;
-    }
-
-    .section-num {
-      font-family: 'Playfair Display', serif;
-      font-size: 0.85rem;
-      color: var(--gold);
-      letter-spacing: 0.1em;
-    }
-
-    .section-title {
-      font-family: 'Playfair Display', serif;
-      font-size: clamp(1.8rem, 3.5vw, 2.8rem);
-      font-weight: 700;
-      line-height: 1.1;
-    }
-
-    /* ABOUT */
-    .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: start; }
-
-    .about-text p { color: var(--muted); margin-bottom: 1.2rem; font-size: 1rem; }
-
-    .contact-list { list-style: none; }
-
-    .contact-list li {
-      display: flex;
-      gap: 1rem;
-      padding: 0.9rem 0;
-      border-bottom: 1px solid var(--border);
-      font-size: 0.9rem;
-    }
-
-    .contact-list .label {
-      font-size: 0.72rem;
-      letter-spacing: 0.15em;
-      text-transform: uppercase;
-      color: var(--muted);
-      min-width: 80px;
-      padding-top: 0.1rem;
-    }
-
-    .contact-list a { color: var(--ink); text-decoration: none; transition: color 0.2s; }
-    .contact-list a:hover { color: var(--gold); }
-
-    /* EDUCATION */
-    .edu-list { list-style: none; }
-
-    .edu-item {
-      display: grid;
-      grid-template-columns: 160px 1fr;
-      gap: 2rem;
-      padding: 2rem 0;
-      border-bottom: 1px solid var(--border);
-      align-items: start;
-    }
-
-    .edu-item:first-child { padding-top: 0; }
-
-    .edu-years { font-size: 0.78rem; letter-spacing: 0.08em; color: var(--muted); padding-top: 0.25rem; }
-
-    .edu-school { font-family: 'Playfair Display', serif; font-size: 1.25rem; font-weight: 700; margin-bottom: 0.25rem; }
-
-    .edu-degree { font-size: 0.88rem; color: var(--muted); }
-
-    .edu-location { font-size: 0.78rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--gold); margin-top: 0.4rem; }
-
-    /* SKILLS */
-    .skills-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--border); }
-
-    .skill-card { background: var(--cream); padding: 2.2rem; }
-
-    .skill-num { font-size: 0.7rem; letter-spacing: 0.15em; color: var(--gold); margin-bottom: 1rem; }
-
-    .skill-name { font-family: 'Playfair Display', serif; font-size: 1.1rem; font-weight: 700; margin-bottom: 0.7rem; line-height: 1.2; }
-
-    .skill-desc { font-size: 0.85rem; color: var(--muted); line-height: 1.65; }
-
-    /* CALCULATOR */
-    .calc-wrapper { display: flex; justify-content: center; }
-
-    .calculator {
-      width: 100%;
-      max-width: 380px;
-      background: var(--ink);
-      border: 1px solid var(--border);
-      box-shadow: 12px 12px 0 var(--border);
-    }
-
-    .calc-display {
-      padding: 1.8rem 1.6rem 1rem;
-      text-align: right;
-      border-bottom: 1px solid #2e2620;
-    }
-
-    .calc-expression {
-      font-size: 0.78rem;
-      letter-spacing: 0.08em;
-      color: var(--muted);
-      min-height: 1.2rem;
-      margin-bottom: 0.4rem;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-
-    .calc-result {
-      font-family: 'Playfair Display', serif;
-      font-size: 2.8rem;
-      font-weight: 700;
-      color: var(--cream);
-      line-height: 1;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-
-    .calc-buttons { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: #2e2620; }
-
-    .calc-btn {
-      background: #221e18;
-      border: none;
-      color: var(--cream);
-      font-family: 'DM Sans', sans-serif;
-      font-size: 1rem;
-      font-weight: 400;
-      padding: 1.1rem 0.5rem;
-      cursor: pointer;
-      transition: background 0.15s, color 0.15s;
-      letter-spacing: 0.02em;
-    }
-
-    .calc-btn:hover { background: #2e2822; }
-    .calc-btn:active { background: var(--gold); color: var(--ink); }
-
-    .calc-btn.op { color: var(--gold); font-size: 1.15rem; }
-    .calc-btn.op:hover { background: #2e2822; color: #e0aa50; }
-
-    .calc-btn.equals { background: var(--gold); color: var(--ink); font-size: 1.2rem; }
-    .calc-btn.equals:hover { background: #d9a840; }
-
-    .calc-btn.clear { color: #e07070; font-size: 0.85rem; letter-spacing: 0.1em; text-transform: uppercase; }
-    .calc-btn.clear:hover { color: #f08080; }
-
-    .calc-btn.span2 { grid-column: span 2; }
-
-    /* FOOTER */
-    footer {
-      padding: 3rem 4rem;
-      border-top: 1px solid var(--border);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 1rem;
-    }
-
-    .footer-name { font-family: 'Playfair Display', serif; font-size: 1rem; font-weight: 700; }
-
-    .footer-links { display: flex; gap: 2rem; list-style: none; }
-
-    .footer-links a {
-      text-decoration: none;
-      color: var(--muted);
-      font-size: 0.78rem;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      transition: color 0.2s;
-    }
-
-    .footer-links a:hover { color: var(--gold); }
-
-    .footer-copy { font-size: 0.78rem; color: var(--muted); }
-
-    /* FADE-IN */
-    .fade-in { opacity: 0; transform: translateY(24px); transition: opacity 0.7s ease, transform 0.7s ease; }
-    .fade-in.visible { opacity: 1; transform: none; }
-
-    /* RESPONSIVE */
-    @media (max-width: 768px) {
-      nav { padding: 1.2rem 1.5rem; }
-      .nav-links { gap: 1rem; }
-      .hero, section { padding: 5rem 1.5rem 3rem; }
-      h1 { font-size: 2.8rem; }
-      .hero::before { font-size: 9rem; right: -0.5rem; }
-      .about-grid { grid-template-columns: 1fr; gap: 2.5rem; }
-      .edu-item { grid-template-columns: 1fr; gap: 0.4rem; }
-      .skills-grid { grid-template-columns: 1fr; }
-      footer { flex-direction: column; align-items: flex-start; padding: 2rem 1.5rem; }
-    }
   </style>
 </head>
 <body>
 
-  <!-- NAV -->
-  <nav>
-    <a href="#" class="nav-logo">Nashif A. Akash</a>
-    <ul class="nav-links">
-      <li><a href="#about">About</a></li>
-      <li><a href="#education">Education</a></li>
-      <li><a href="#skills">Skills</a></li>
-      <li><a href="#calculator">Calculator</a></li>
-      <li><a href="#contact">Contact</a></li>
-    </ul>
-  </nav>
+<div class="calculator">
+  <div class="display">
+    <div class="expression" id="expression"></div>
+    <div class="result" id="result">0</div>
+  </div>
+  <div class="buttons">
+    <button class="clear" onclick="clearAll()">AC</button>
+    <button class="op" onclick="toggleSign()">+/−</button>
+    <button class="op" onclick="percent()">%</button>
+    <button class="op" onclick="inputOp('/')">÷</button>
 
-  <!-- HERO -->
-  <section class="hero" id="home">
-    <div class="hero-content">
-      <p class="hero-tag fade-in">Business Student &amp; Sportsman</p>
-      <h1 class="fade-in">Nashif<br />Adnan<br />Akash</h1>
-      <p class="hero-desc fade-in">
-        Originally from Bangladesh, now based in the United States — driven by curiosity,
-        ambition, and a deep love for sport.
-      </p>
-      <div class="hero-links fade-in">
-        <a href="mailto:nashifadnanakash270@gmail.com" class="btn primary">Get in Touch</a>
-        <a href="https://www.linkedin.com/in/nashif-adnan-akash" target="_blank" rel="noopener" class="btn">LinkedIn</a>
-      </div>
-    </div>
-  </section>
+```
+<button onclick="inputNum('7')">7</button>
+<button onclick="inputNum('8')">8</button>
+<button onclick="inputNum('9')">9</button>
+<button class="op" onclick="inputOp('*')">×</button>
 
-  <!-- ABOUT -->
-  <section id="about">
-    <div class="section-header fade-in">
-      <span class="section-num">01</span>
-      <h2 class="section-title">About Me</h2>
-    </div>
-    <div class="about-grid">
-      <div class="about-text fade-in">
-        <p>I'm Nashif Adnan Akash — a business student originally from Bangladesh, now based in the United States. My academic journey has taken me from the halls of Rajabari High School all the way to Pacific States University, shaped by curiosity, ambition, and a love for sport.</p>
-        <p>Cricket and football are more than hobbies to me — they've built my character, teamwork, and resilience. Outside the pitch and classroom, I'm always looking for ways to grow, connect, and make an impact.</p>
-      </div>
-      <div class="fade-in">
-        <ul class="contact-list" id="contact">
-          <li><span class="label">Email</span><a href="mailto:nashifadnanakash270@gmail.com">nashifadnanakash270@gmail.com</a></li>
-          <li><span class="label">LinkedIn</span><a href="https://www.linkedin.com/in/nashif-adnan-akash" target="_blank" rel="noopener">Nashif Adnan Akash ↗</a></li>
-          <li><span class="label">Instagram</span><a href="https://www.instagram.com/akashahmeedabhi" target="_blank" rel="noopener">@akashahmeedabhi ↗</a></li>
-          <li><span class="label">Location</span><span>United States of America</span></li>
-        </ul>
-      </div>
-    </div>
-  </section>
+<button onclick="inputNum('4')">4</button>
+<button onclick="inputNum('5')">5</button>
+<button onclick="inputNum('6')">6</button>
+<button class="op" onclick="inputOp('-')">−</button>
 
-  <!-- EDUCATION -->
-  <section id="education">
-    <div class="section-header fade-in">
-      <span class="section-num">02</span>
-      <h2 class="section-title">Education</h2>
-    </div>
-    <ul class="edu-list">
-      <li class="edu-item fade-in">
-        <span class="edu-years">2024 — Present</span>
-        <div><p class="edu-school">Pacific States University</p><p class="edu-degree">Bachelor of Business Administration</p><p class="edu-location">USA</p></div>
-      </li>
-      <li class="edu-item fade-in">
-        <span class="edu-years">2020 — 2023</span>
-        <div><p class="edu-school">Dhaka College</p><p class="edu-degree">Bachelor of Business Administration</p><p class="edu-location">Dhaka, Bangladesh</p></div>
-      </li>
-      <li class="edu-item fade-in">
-        <span class="edu-years">2017 — 2019</span>
-        <div><p class="edu-school">Adamjee Cantonment College</p><p class="edu-degree">HSC — Higher Secondary Certificate</p><p class="edu-location">Dhaka, Bangladesh</p></div>
-      </li>
-      <li class="edu-item fade-in">
-        <span class="edu-years">2017</span>
-        <div><p class="edu-school">Rajabari High School</p><p class="edu-degree">SSC — Secondary School Certificate</p><p class="edu-location">Bangladesh</p></div>
-      </li>
-    </ul>
-  </section>
+<button onclick="inputNum('1')">1</button>
+<button onclick="inputNum('2')">2</button>
+<button onclick="inputNum('3')">3</button>
+<button class="op" onclick="inputOp('+')">+</button>
 
-  <!-- SKILLS -->
-  <section id="skills">
-    <div class="section-header fade-in">
-      <span class="section-num">03</span>
-      <h2 class="section-title">Skills &amp; Interests</h2>
-    </div>
-    <div class="skills-grid">
-      <div class="skill-card fade-in"><p class="skill-num">001</p><p class="skill-name">Business &amp; Management</p><p class="skill-desc">Foundation in business administration, strategy, and organizational thinking built through years of dedicated study.</p></div>
-      <div class="skill-card fade-in"><p class="skill-num">002</p><p class="skill-name">Cross-Cultural Adaptability</p><p class="skill-desc">Lived and studied across Bangladesh and the USA — at ease navigating diverse environments and communities.</p></div>
-      <div class="skill-card fade-in"><p class="skill-num">003</p><p class="skill-name">Communication</p><p class="skill-desc">Fluent in English and Bengali, with a clear and confident approach to ideas in academic and social settings.</p></div>
-      <div class="skill-card fade-in"><p class="skill-num">004</p><p class="skill-name">Cricket</p><p class="skill-desc">A sport that shaped my patience, composure, and team spirit. Always ready to step onto the pitch.</p></div>
-      <div class="skill-card fade-in"><p class="skill-num">005</p><p class="skill-name">Football</p><p class="skill-desc">The beautiful game keeps me sharp and driven. Sport is where I compete, grow, and stay grounded.</p></div>
-      <div class="skill-card fade-in"><p class="skill-num">006</p><p class="skill-name">Fitness &amp; Active Lifestyle</p><p class="skill-desc">Sport is core to who I am — staying active, pushing limits, and always trying to be a better version of myself.</p></div>
-    </div>
-  </section>
+<button class="span2" onclick="inputNum('0')">0</button>
+<button onclick="inputDot()">.</button>
+<button class="equals" onclick="calculate()">=</button>
+```
 
-  <!-- CALCULATOR -->
-  <section id="calculator">
-    <div class="section-header fade-in">
-      <span class="section-num">04</span>
-      <h2 class="section-title">Calculator</h2>
-    </div>
-    <div class="calc-wrapper fade-in">
-      <div class="calculator">
-        <div class="calc-display">
-          <div class="calc-expression" id="expression"></div>
-          <div class="calc-result" id="result">0</div>
-        </div>
-        <div class="calc-buttons">
-          <button class="calc-btn clear" onclick="clearAll()">AC</button>
-          <button class="calc-btn op" onclick="toggleSign()">+/−</button>
-          <button class="calc-btn op" onclick="percent()">%</button>
-          <button class="calc-btn op" onclick="inputOp('/')">÷</button>
+  </div>
+</div>
 
-          <button class="calc-btn" onclick="inputNum('7')">7</button>
-          <button class="calc-btn" onclick="inputNum('8')">8</button>
-          <button class="calc-btn" onclick="inputNum('9')">9</button>
-          <button class="calc-btn op" onclick="inputOp('*')">×</button>
+<script>
+  let current = '0', previous = '', operator = null, shouldReset = false;
+  const resultEl = document.getElementById('result');
+  const exprEl = document.getElementById('expression');
 
-          <button class="calc-btn" onclick="inputNum('4')">4</button>
-          <button class="calc-btn" onclick="inputNum('5')">5</button>
-          <button class="calc-btn" onclick="inputNum('6')">6</button>
-          <button class="calc-btn op" onclick="inputOp('-')">−</button>
+  function updateDisplay() { resultEl.textContent = current; }
 
-          <button class="calc-btn" onclick="inputNum('1')">1</button>
-          <button class="calc-btn" onclick="inputNum('2')">2</button>
-          <button class="calc-btn" onclick="inputNum('3')">3</button>
-          <button class="calc-btn op" onclick="inputOp('+')">+</button>
+  function inputNum(n) {
+    if (shouldReset) { current = n; shouldReset = false; }
+    else current = current === '0' ? n : current + n;
+    updateDisplay();
+  }
 
-          <button class="calc-btn span2" onclick="inputNum('0')">0</button>
-          <button class="calc-btn" onclick="inputDot()">.</button>
-          <button class="calc-btn equals" onclick="calculate()">=</button>
-        </div>
-      </div>
-    </div>
-  </section>
+  function inputDot() {
+    if (shouldReset) { current = '0.'; shouldReset = false; updateDisplay(); return; }
+    if (!current.includes('.')) current += '.';
+    updateDisplay();
+  }
 
-  <!-- FOOTER -->
-  <footer>
-    <p class="footer-name">Nashif Adnan Akash</p>
-    <ul class="footer-links">
-      <li><a href="mailto:nashifadnanakash270@gmail.com">Gmail</a></li>
-      <li><a href="https://www.linkedin.com/in/nashif-adnan-akash" target="_blank" rel="noopener">LinkedIn</a></li>
-      <li><a href="https://www.instagram.com/akashahmeedabhi" target="_blank" rel="noopener">Instagram</a></li>
-    </ul>
-    <p class="footer-copy">© 2026 · All rights reserved</p>
-  </footer>
+  function inputOp(op) {
+    if (operator && !shouldReset) calculate(true);
+    previous = current; operator = op; shouldReset = true;
+    const s = { '/': '÷', '*': '×', '-': '−', '+': '+' };
+    exprEl.textContent = previous + ' ' + s[op];
+  }
 
-  <script>
-    // Fade-in
-    const observer = new IntersectionObserver(entries => {
-      entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
-    }, { threshold: 0.1 });
-    document.querySelectorAll('.fade-in').forEach((el, i) => {
-      el.style.transitionDelay = (i % 4) * 0.1 + 's';
-      observer.observe(el);
-    });
-
-    // Calculator
-    let current = '0', previous = '', operator = null, shouldReset = false;
-    const resultEl = document.getElementById('result');
-    const exprEl = document.getElementById('expression');
-
-    function updateDisplay() { resultEl.textContent = current; }
-
-    function inputNum(n) {
-      if (shouldReset) { current = n; shouldReset = false; }
-      else current = current === '0' ? n : current + n;
-      updateDisplay();
-    }
-
-    function inputDot() {
-      if (shouldReset) { current = '0.'; shouldReset = false; updateDisplay(); return; }
-      if (!current.includes('.')) current += '.';
-      updateDisplay();
-    }
-
-    function inputOp(op) {
-      if (operator && !shouldReset) calculate(true);
-      previous = current; operator = op; shouldReset = true;
+  function calculate(chain = false) {
+    if (!operator || !previous) return;
+    const a = parseFloat(previous), b = parseFloat(current);
+    let res;
+    if (operator === '/') res = b !== 0 ? a / b : 'Error';
+    else if (operator === '*') res = a * b;
+    else if (operator === '-') res = a - b;
+    else if (operator === '+') res = a + b;
+    if (!chain) {
       const s = { '/': '÷', '*': '×', '-': '−', '+': '+' };
-      exprEl.textContent = previous + ' ' + s[op];
+      exprEl.textContent = previous + ' ' + s[operator] + ' ' + current + ' =';
+      operator = null;
     }
+    current = res === 'Error' ? 'Error' : String(parseFloat(res.toFixed(10)));
+    shouldReset = true;
+    updateDisplay();
+  }
 
-    function calculate(chain = false) {
-      if (!operator || !previous) return;
-      const a = parseFloat(previous), b = parseFloat(current);
-      let res;
-      if (operator === '/') res = b !== 0 ? a / b : 'Error';
-      else if (operator === '*') res = a * b;
-      else if (operator === '-') res = a - b;
-      else if (operator === '+') res = a + b;
-      if (!chain) {
-        const s = { '/': '÷', '*': '×', '-': '−', '+': '+' };
-        exprEl.textContent = previous + ' ' + s[operator] + ' ' + current + ' =';
-        operator = null;
-      }
-      current = res === 'Error' ? 'Error' : String(parseFloat(res.toFixed(10)));
-      shouldReset = true;
-      updateDisplay();
-    }
+  function clearAll() {
+    current = '0'; previous = ''; operator = null; shouldReset = false;
+    exprEl.textContent = ''; updateDisplay();
+  }
 
-    function clearAll() {
-      current = '0'; previous = ''; operator = null; shouldReset = false;
-      exprEl.textContent = ''; updateDisplay();
-    }
-
-    function toggleSign() { current = String(parseFloat(current) * -1); updateDisplay(); }
-    function percent() { current = String(parseFloat(current) / 100); updateDisplay(); }
-  </script>
+  function toggleSign() { current = String(parseFloat(current) * -1); updateDisplay(); }
+  function percent() { current = String(parseFloat(current) / 100); updateDisplay(); }
+</script>
 
 </body>
-</html>;
+</html>
